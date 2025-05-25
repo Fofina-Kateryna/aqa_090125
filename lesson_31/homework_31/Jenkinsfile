@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV = 'venv'
+    }
+
+    stages {
+        stage('Checkout code') {
+            steps {
+                git branch: 'homework_31', url: 'https://github.com/Fofina-Kateryna/aqa_090125.git'
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                dir('lesson_31/homework_31') {
+                    sh 'python3 -m venv $VENV'
+                    sh '. $VENV/bin/activate && pip install --upgrade pip'
+                    sh '. $VENV/bin/activate && pip install -r requirements.txt'
+                }
+            }
+        }
+
+        stage('Run tests') {
+            steps {
+                dir('lesson_31/homework_31') {
+                    sh '. $VENV/bin/activate && pytest --maxfail=1 --disable-warnings --junitxml=results.xml'
+                }
+            }
+        }
+
+        stage('Publish test results') {
+            steps {
+                junit 'lesson_31/homework_31/results.xml'
+            }
+        }
+
+        post {
+            always {
+                echo 'Pipeline finished'
+            }
+            failure {
+                echo 'Build failed!'
+                 }
+            success {
+                echo 'Build succeeded!'
+            }
+    }
+    }
+}
