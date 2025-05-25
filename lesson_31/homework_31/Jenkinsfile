@@ -32,20 +32,22 @@ pipeline {
 
         stage('Publish test results') {
             steps {
-                junit 'lesson_31/homework_31/results.xml'
+                dir('lesson_31/homework_31') {
+                    junit 'results.xml'
+                }
             }
         }
-
-        post {
-            always {
-                echo 'Pipeline finished'
-            }
-            failure {
-                echo 'Build failed!'
-                 }
-            success {
-                echo 'Build succeeded!'
-            }
     }
+
+    post {
+        always {
+            echo 'Pipeline finished'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
     }
 }
